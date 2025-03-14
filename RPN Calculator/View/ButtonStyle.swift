@@ -47,4 +47,12 @@ final class ButtonStyle: UIButton {
         super.layoutSubviews()
         digitNumber.frame = CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height)
     }
+    
+    static func createButton(with digitChar: String) -> ButtonStyle {
+        let button = ButtonStyle()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        let viewModel = ButtonStyleViewModel(digitChar: digitChar)
+        button.configure(with: viewModel)
+        return button
+    }
 }

@@ -17,19 +17,23 @@ final class NumberPad: UIStackView {
         stackView.spacing = 10
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.backgroundColor = .red
+
         
         return stackView
+        
+        
     }()
     
-    private let rowStackVIew: UIStackView = {
+    private func createRowStackView() -> UIStackView {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.spacing = 10
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.backgroundColor = .blue
         
         return stackView
-    }()
+    }
     
     private let buttonCharacters = [
         ["A","(",")","÷"],
@@ -45,10 +49,6 @@ final class NumberPad: UIStackView {
         addSubview(mainStackView)
         clipsToBounds = true
         
-        //MARK: - Round Corners
-        layer.cornerRadius = self.bounds.height / 2
-        layer.masksToBounds = true
-        
         backgroundColor = .green
     }
     
@@ -58,17 +58,40 @@ final class NumberPad: UIStackView {
     
     func configureButtons(with rowsCharacters: [[String]]){
         for row in rowsCharacters{
+            
+            let rowStackView = createRowStackView()
+            
             for character in row {
-                let button = ButtonStyleViewModel(digitChar: character)
-                rowStackVIew.addArrangedSubview(button)
+                let button = ButtonStyle.createButton(with: character)
+                button.addTarget(self, action: #selector(buttonHandler(sender:)), for: .touchUpInside)
+                rowStackView.addArrangedSubview(button)
             }
-            mainStackView.addArrangedSubview(rowStackVIew)
+            mainStackView.addArrangedSubview(rowStackView)
+
         }
+    }
+    
+    @objc func buttonHandler(sender: UIButton){
+        
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-       
+        
+        guard let superview = superview else { return }
+        
+        mainStackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            mainStackView.topAnchor.constraint(equalTo: superview.centerYAnchor, constant: -80),
+            mainStackView.leadingAnchor.constraint(equalTo: superview.leadingAnchor, constant: 20),
+            mainStackView.trailingAnchor.constraint(equalTo: superview.trailingAnchor, constant: -20),
+            mainStackView.bottomAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.bottomAnchor)
+        ])
     }
 
+}
+
+protocol ButtonWorker {
+    func buttonAction(_ sender: UIButton)
 }
