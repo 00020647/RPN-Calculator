@@ -8,7 +8,6 @@
 import UIKit
 
 final class NumberPad: UIStackView {
-
     private let mainStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -16,12 +15,9 @@ final class NumberPad: UIStackView {
         stackView.alignment = .fill
         stackView.spacing = 10
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.backgroundColor = .red
 
         
         return stackView
-        
-        
     }()
     
     private func createRowStackView() -> UIStackView {
@@ -30,26 +26,15 @@ final class NumberPad: UIStackView {
         stackView.distribution = .fillEqually
         stackView.spacing = 10
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.backgroundColor = .blue
         
         return stackView
     }
     
-    private let buttonCharacters = [
-        ["A","(",")","÷"],
-        ["7","8","9","×"],
-        ["4","5","6","-"],
-        ["1","2","3","+"],
-        ["0",".", "="]
-    ]
 
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(mainStackView)
         clipsToBounds = true
-        
-        backgroundColor = .green
     }
     
     required init(coder: NSCoder) {
@@ -63,16 +48,18 @@ final class NumberPad: UIStackView {
             
             for character in row {
                 let button = ButtonStyle.createButton(with: character)
-                button.addTarget(self, action: #selector(buttonHandler(sender:)), for: .touchUpInside)
+                button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
                 rowStackView.addArrangedSubview(button)
             }
             mainStackView.addArrangedSubview(rowStackView)
-
         }
     }
     
-    @objc func buttonHandler(sender: UIButton){
-        
+    var buttonActionHandler: ((UIButton) -> Void)?
+    
+    @objc func buttonTapped(_ sender: UIButton){
+        buttonActionHandler?(sender)
+        print("Это замыкание в которой хранится функция", buttonActionHandler)
     }
     
     override func layoutSubviews() {
@@ -92,6 +79,4 @@ final class NumberPad: UIStackView {
 
 }
 
-protocol ButtonWorker {
-    func buttonAction(_ sender: UIButton)
-}
+
