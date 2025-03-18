@@ -33,11 +33,17 @@ enum ExpressionHelper {
     }
 }
 
-enum Operator: Character {
+enum Op: Character {
     case addition = "+"
     case subtraction = "-"
     case multiplication = "×"
     case division = "÷"
     case leftParenthesis = "("
     case rightParenthesis = ")"
+    case eraseAll = "A"
+    case deleteLast = "⌫"
+    case equalSign = "="
+    case decimal = "."
 }
+
+

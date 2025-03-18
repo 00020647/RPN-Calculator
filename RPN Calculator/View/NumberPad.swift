@@ -8,7 +8,7 @@
 import UIKit
 
 final class NumberPad: UIStackView {
-    private let mainStackView: UIStackView = {
+    let mainStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.distribution = .fillEqually
@@ -20,7 +20,7 @@ final class NumberPad: UIStackView {
         return stackView
     }()
     
-    private func createRowStackView() -> UIStackView {
+    func createRowStackView() -> UIStackView {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
@@ -55,28 +55,16 @@ final class NumberPad: UIStackView {
         }
     }
     
-    var buttonActionHandler: ((UIButton) -> Void)?
     
+    weak var delegate: ButtonActionProtocol?
     @objc func buttonTapped(_ sender: UIButton){
-        buttonActionHandler?(sender)
-        print("Это замыкание в которой хранится функция", buttonActionHandler)
+        if let text = sender.titleLabel?.text{
+            delegate?.btnReceiver(buttonInput:text)
+        }
     }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        guard let superview = superview else { return }
-        
-        mainStackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            mainStackView.topAnchor.constraint(equalTo: superview.centerYAnchor, constant: -80),
-            mainStackView.leadingAnchor.constraint(equalTo: superview.leadingAnchor, constant: 20),
-            mainStackView.trailingAnchor.constraint(equalTo: superview.trailingAnchor, constant: -20),
-            mainStackView.bottomAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.bottomAnchor)
-        ])
-    }
-
 }
 
+protocol ButtonActionProtocol: AnyObject {
+    func btnReceiver(buttonInput: String)
+}
 

@@ -23,7 +23,6 @@ final class RPN{
         
         var index = input.startIndex
         
-        
         let delimeter = " "
         
         while index < input.endIndex{
@@ -46,12 +45,12 @@ final class RPN{
             
             if ExpressionHelper.isOperator(input[index]){
                 switch input[index] {
-                case Operator.leftParenthesis.rawValue:
+                case Op.leftParenthesis.rawValue:
                     stackOperators.push(input[index])
-                case Operator.rightParenthesis.rawValue:
+                case Op.rightParenthesis.rawValue:
                     guard let lastOperator = stackOperators.pop() else {break}
                     var operatorStackItem = lastOperator
-                    while operatorStackItem != Operator.leftParenthesis.rawValue{
+                    while operatorStackItem != Op.leftParenthesis.rawValue{
                         rpnForm.append(operatorStackItem)
                         rpnForm.append(delimeter)
                         guard let canBePopped = stackOperators.pop() else { break }
@@ -86,7 +85,7 @@ final class RPN{
     func calculateResult(_ output: String)-> Double
     {
         var total: Double = 0.0
-        
+
         var stack: Stack<Double> = Stack<Double>()
         
         var index = output.startIndex
@@ -107,13 +106,13 @@ final class RPN{
                 guard let lastNumber = stack.pop(), let preLastNumber = stack.pop() else { break }
                 
                 switch output[index] {
-                case Operator.addition.rawValue:
+                case Op.addition.rawValue:
                     total = preLastNumber + lastNumber; break
-                case Operator.subtraction.rawValue:
+                case Op.subtraction.rawValue:
                     total = preLastNumber - lastNumber; break
-                case Operator.multiplication.rawValue:
+                case Op.multiplication.rawValue:
                     total = preLastNumber * lastNumber; break
-                case Operator.division.rawValue:
+                case Op.division.rawValue:
                     total = preLastNumber / lastNumber; break
                 default:
                     break
@@ -126,6 +125,4 @@ final class RPN{
         
         return stack.peek() ?? 0.0
     }
-    
-    
 }
