@@ -9,7 +9,7 @@ import UIKit
 
 extension ViewController {
     
-    func btnReceiver(buttonInput: String) {
+    func btnReceiver(buttonInput: String) { 
         
         guard var stringExpression = resultLabel.text else { return }
         
@@ -17,10 +17,11 @@ extension ViewController {
         
         let arithmeticOperators: [Character] = ["+","-", "×", "÷"]
         
-        let numberComponents = stringExpression.components(separatedBy: CharacterSet(charactersIn: "÷×-+"))
+        let numberComponents = stringExpression.components(separatedBy: CharacterSet(charactersIn: "÷×-+()"))
         let lastDigit = numberComponents.last
+        var lastCharacter = stringExpression.last
         
-        let allComponents = stringExpression.components(separatedBy: " ")
+//        let allComponents = stringExpression.components(separatedBy: " ")
         
         
         switch characterReceived {
@@ -41,6 +42,9 @@ extension ViewController {
                         break
                     }
                 }
+                if lastCharacter == Op.decimal.rawValue{
+                    stringExpression.removeLast()
+                }
                 stringExpression.append(characterReceived)
                 resultLabel.text = stringExpression
             }
@@ -48,11 +52,25 @@ extension ViewController {
             
         case Op.equalSign.rawValue:
             let rpn = RPN()
+            
+            if lastCharacter == Op.leftParenthesis.rawValue{
+                while lastCharacter?.isNumber == false{
+                    print(stringExpression)
+                    stringExpression.removeLast()
+                    lastCharacter = stringExpression.last
+                    //print(lastCharacter)
+                }
+            }
+            
+            if areParenthesesBalanced(in: stringExpression) == false{
+                while areParenthesesBalanced(in: stringExpression) == false{
+                    stringExpression.append(Op.rightParenthesis.rawValue)
+                }
+                print(stringExpression)
+            }
+
             let result = rpn.calculate(stringExpression)
             
-            if areParenthesesBalanced(in: stringExpression){
-                stringExpression.append(Op.rightParenthesis.rawValue)
-            }
             if result.remainder(dividingBy: 1) == 0 {
                 let numberFormatter = NumberFormatter()
                 numberFormatter.minimumFractionDigits = 0
@@ -62,7 +80,6 @@ extension ViewController {
             } else {
                 resultLabel.text = "\(result)"
             }
-            print(allComponents)
             
         case Op.deleteLast.rawValue:
             guard (resultLabel.text != "") else { return resultLabel.text = "0"}
@@ -81,7 +98,9 @@ extension ViewController {
                 stringExpression = ""
                 resultLabel.text = stringExpression
             }
-            
+            if lastCharacter == Op.decimal.rawValue{
+                stringExpression.removeLast()
+            }
             if (stringExpression.last?.isNumber == true) || stringExpression.last == Op.rightParenthesis.rawValue
             {
                 stringExpression.append(Op.multiplication.rawValue)
@@ -91,9 +110,31 @@ extension ViewController {
                 stringExpression.append(characterReceived)
                 resultLabel.text = stringExpression
             }
+            
+        case Op.rightParenthesis.rawValue:
+            if lastCharacter == Op.decimal.rawValue{
+                stringExpression.removeLast()
+            }
+            if let last = stringExpression.last, arithmeticOperators.contains(last) {
+                stringExpression.removeLast()
+            }
+            if areParenthesesBalanced(in: stringExpression) {
+                return
+            }
+            if lastCharacter == Op.leftParenthesis.rawValue{
+                return
+            }
+            stringExpression.append(characterReceived)
+            resultLabel.text = stringExpression
         case Op.decimal.rawValue:
             if ((lastDigit?.contains(Op.decimal.rawValue)) == true){
-                break
+                return
+            }
+            if stringExpression.last?.isNumber != true {
+                stringExpression.append("0")
+                stringExpression.append(characterReceived)
+                resultLabel.text = stringExpression
+//                return
             }
             else {
                 stringExpression.append(characterReceived)
@@ -101,7 +142,7 @@ extension ViewController {
             }
         default:
             if lastDigit == "0", characterReceived.isNumber, stringExpression.first != "0"{
-                return
+                stringExpression.removeLast()
             }
             if stringExpression == "0" {
                 stringExpression = ""
@@ -109,7 +150,9 @@ extension ViewController {
             if resultLabel.text == ""{
                 resultLabel.text = "0"
             }
-            
+            if lastCharacter == Op.rightParenthesis.rawValue{
+                stringExpression.append(Op.multiplication.rawValue)
+            }
             resultLabel.text = "\(stringExpression)\(buttonInput)"
             print("\(stringExpression)\(buttonInput)")
         }
@@ -125,7 +168,7 @@ extension ViewController {
                 count -= 1
             }
             // If at any point we have more right than left, it’s unbalanced.
-            if count < 0 { return true }
+            if count < 0 { return false }
         }
         return count == 0
     }

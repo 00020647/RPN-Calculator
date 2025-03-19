@@ -9,15 +9,15 @@ import Foundation
 
 enum ExpressionHelper {
     
-    static func isDelimiter(_ symbol: Character) -> Bool {
+    static func isDelimiter(_ symbol: String) -> Bool {
         return " =".contains(symbol)
     }
 
-    static func isOperator(_ symbol: Character) -> Bool {
+    static func isOperator(_ symbol: String) -> Bool {
         return "+-÷×()".contains(symbol)
     }
 
-    static func getPriority(_ symbol: Character) -> Int {
+    static func getPriority(_ symbol: String) -> Int {
         switch symbol {
         case "(":
             return 0
@@ -33,7 +33,7 @@ enum ExpressionHelper {
     }
 }
 
-enum Op: Character {
+enum Op: String {
     case addition = "+"
     case subtraction = "-"
     case multiplication = "×"

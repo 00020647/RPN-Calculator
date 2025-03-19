@@ -10,79 +10,73 @@ import Foundation
 final class RPN{
     //MARK: - Parsing Values between Methods
     func calculate(_ input: String)-> Double{
-        let rpnExpression: String = convertToRPN(input)
+        let arrayOfCharacters: [String] = stringToArray(input)
+        let rpnExpression: [String] = convertToRPN(arrayOfCharacters)
         let result: Double = calculateResult(rpnExpression)
         return result
     }
     
-    //MARK: - Converting to RPN
-    func convertToRPN(_ input: String) -> String {
-        var rpnForm: String = ""
+    
+    func stringToArray(_ input: String)-> [String]{
+        var array: [String] = []
+        var number = String()
         
-        var stackOperators: Stack<Character> = Stack<Character>()
-        
-        var index = input.startIndex
-        
-        let delimeter = " "
-        
-        while index < input.endIndex{
-            
-            if ExpressionHelper.isDelimiter(input[index]){
-                index = input.index(after: index)
-                continue
+        for element in input{
+            if element.isNumber {
+                number.append(element)
             }
-            
-            if input[index].isNumber {
-                while index < input.endIndex &&
-                        !ExpressionHelper.isDelimiter(input[index])
-                        && !ExpressionHelper.isOperator(input[index]){
-                    rpnForm.append(input[index])
-                    index = input.index(after: index)
+            else{
+                if !number.isEmpty {
+                    array.append(number)
+                    number.removeAll()
                 }
-                rpnForm.append(delimeter)
-                continue
+                array.append(String(element))
             }
-            
-            if ExpressionHelper.isOperator(input[index]){
-                switch input[index] {
+        }
+        if !number.isEmpty {
+            array.append(number)
+        }
+        return array
+    }
+ 
+    
+    //MARK: - Converting to RPN
+    func convertToRPN(_ input: [String]) -> [String] {
+        var rpnForm: [String] = []
+        
+        var stackOperators: Stack<String> = Stack<String>()
+        
+        for character in input {
+            if let wholeNumber = Double(character){
+                rpnForm.append(character)
+            }else {
+                switch character {
                 case Op.leftParenthesis.rawValue:
-                    stackOperators.push(input[index])
+                    stackOperators.push(character)
                 case Op.rightParenthesis.rawValue:
                     guard let lastOperator = stackOperators.pop() else {break}
                     var operatorStackItem = lastOperator
                     while operatorStackItem != Op.leftParenthesis.rawValue{
                         rpnForm.append(operatorStackItem)
-                        rpnForm.append(delimeter)
                         guard let canBePopped = stackOperators.pop() else { break }
                         operatorStackItem = canBePopped
                     }
                 default:
                     while let topStackOperator = stackOperators.peek(),
-                          ExpressionHelper.getPriority(topStackOperator) >= ExpressionHelper.getPriority(input[index]) {
+                          ExpressionHelper.getPriority(topStackOperator) >= ExpressionHelper.getPriority(character) {
                         guard let topOperator = stackOperators.pop() else { break }
                         rpnForm.append(topOperator)
-                        rpnForm.append(delimeter)
                     }
-                    stackOperators.push(input[index])
+                    stackOperators.push(character)
                 }
             }
-            
-            index = input.index(after: index)
-            
-
         }
-        while stackOperators.length() > 0 {
-            guard let operatorToRemove = stackOperators.pop() else { break }
-            rpnForm.append(operatorToRemove)
-            rpnForm.append(delimeter)
-        }
-        
         return rpnForm
     }
     
     
     //MARK: - Calculating result
-    func calculateResult(_ output: String)-> Double
+    func calculateResult(_ output: [String])-> Double
     {
         var total: Double = 0.0
 
@@ -125,4 +119,6 @@ final class RPN{
         
         return stack.peek() ?? 0.0
     }
+    
+
 }

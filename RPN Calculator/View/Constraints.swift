@@ -16,6 +16,7 @@ extension NumberPad {
         
         NSLayoutConstraint.activate([
             mainStackView.topAnchor.constraint(equalTo: superview.centerYAnchor, constant: -80),
+//            mainStackView.bottomAnchor.constraint(equalTo: superview.bottomAnchor, constant: -10),
             mainStackView.leadingAnchor.constraint(equalTo: superview.leadingAnchor, constant: 20),
             mainStackView.trailingAnchor.constraint(equalTo: superview.trailingAnchor, constant: -20),
             mainStackView.heightAnchor.constraint(equalTo: mainStackView.widthAnchor, multiplier: 5/4)
@@ -25,17 +26,6 @@ extension NumberPad {
     }
 }
 
-extension ResultLabel {
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        guard let superview = superview else { return }
-        
-//        NSLayoutConstraint.activate([
-//            resultLabel.topAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.topAnchor, constant: 100),
-//            resultLabel.leadingAnchor.constraint(equalTo: superview.leadingAnchor, constant: 20),
-//            resultLabel.trailingAnchor.constraint(equalTo: superview.trailingAnchor, constant: -20),
-//            resultLabel.heightAnchor.constraint(equalToConstant: 80)
-//        ])
-    }
-}
+
+
 

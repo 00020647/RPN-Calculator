@@ -9,7 +9,7 @@ import UIKit
 
 let resultLabel = ResultLabel()
 
-class ViewController: UIViewController, ButtonActionProtocol, UIScrollViewDelegate {
+class ViewController: UIViewController, ButtonActionProtocol{
     
     let numberPad = NumberPad()
     
@@ -17,25 +17,14 @@ class ViewController: UIViewController, ButtonActionProtocol, UIScrollViewDelega
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        view.addSubview(numberPad) // Add NumberPad to the ViewController's
-        
         setupUI()
+        fetchData()
         
-        let buttonCharacters = [
-            ["A","(",")","÷"],
-            ["7","8","9","×"],
-            ["4","5","6","-"],
-            ["1","2","3","+"],
-            ["⌫", "0",".", "="]
-        ]
-        numberPad.configureButtons(with: buttonCharacters)
-        print(rpn.convertToRPN("5-(45+(8-6))"))//4×9+(3+4×7
-        numberPad.delegate = self
-        
-        
-        
+        print(stringToArray("5-2+2(2*2)-2"))
     }
+    
+    
+    
     
     let containerView: UIView = {
         let view = UIView()
@@ -50,14 +39,25 @@ class ViewController: UIViewController, ButtonActionProtocol, UIScrollViewDelega
         scrollView.alwaysBounceHorizontal = false
         
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.backgroundColor = UIColor.green
         return scrollView
     }()
     
+    private func fetchData(){
+        let buttonCharacters = [
+            ["A","(",")","÷"],
+            ["7","8","9","×"],
+            ["4","5","6","-"],
+            ["1","2","3","+"],
+            ["⌫", "0",".", "="]
+        ]
+        numberPad.configureButtons(with: buttonCharacters)
+        numberPad.delegate = self
+        view.addSubview(numberPad)
+    }
     private func setupUI() {
         view.addSubview(labelScrollView)
         
-        resultLabel.backgroundColor = .purple
+        //        resultLabel.backgroundColor = .purple
         // Add the resultLabel to the scroll view's content layout.
         resultLabel.translatesAutoresizingMaskIntoConstraints = false
         
@@ -69,7 +69,7 @@ class ViewController: UIViewController, ButtonActionProtocol, UIScrollViewDelega
             labelScrollView.heightAnchor.constraint(equalToConstant: 80)
         ])
         
-        containerView.backgroundColor = UIColor.blue
+        //        containerView.backgroundColor = UIColor.blue
         
         labelScrollView.addSubview(containerView)
         NSLayoutConstraint.activate([
@@ -95,8 +95,6 @@ class ViewController: UIViewController, ButtonActionProtocol, UIScrollViewDelega
         
         view.backgroundColor = UIColor(red: 32/255, green: 39/255, blue: 44/255, alpha: 1)
         
-        labelScrollView.delegate = self
-        
         print(labelScrollView.contentOffset)
         
         // In your view controller, when setting up the scroll view:
@@ -107,6 +105,3 @@ class ViewController: UIViewController, ButtonActionProtocol, UIScrollViewDelega
 }
 
 
-extension UIScrollViewDelegate {
-    
-}
