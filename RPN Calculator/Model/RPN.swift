@@ -22,7 +22,7 @@ final class RPN{
         var number = String()
         
         for element in input{
-            if element.isNumber {
+            if ExpressionHelper.isOperator(element) == false {
                 number.append(element)
             }
             else{
@@ -38,7 +38,7 @@ final class RPN{
         }
         return array
     }
- 
+    
     
     //MARK: - Converting to RPN
     func convertToRPN(_ input: [String]) -> [String] {
@@ -47,29 +47,31 @@ final class RPN{
         var stackOperators: Stack<String> = Stack<String>()
         
         for character in input {
-            if let wholeNumber = Double(character){
+            if Double(character) != nil{
                 rpnForm.append(character)
             }else {
                 switch character {
                 case Op.leftParenthesis.rawValue:
                     stackOperators.push(character)
+                    
                 case Op.rightParenthesis.rawValue:
-                    guard let lastOperator = stackOperators.pop() else {break}
-                    var operatorStackItem = lastOperator
-                    while operatorStackItem != Op.leftParenthesis.rawValue{
-                        rpnForm.append(operatorStackItem)
-                        guard let canBePopped = stackOperators.pop() else { break }
-                        operatorStackItem = canBePopped
+                    while let top = stackOperators.peek(), top != Op.leftParenthesis.rawValue {
+                        rpnForm.append(stackOperators.pop()!)
                     }
+                    // Pop and discard the left parenthesis.
+                    _ = stackOperators.pop()
                 default:
                     while let topStackOperator = stackOperators.peek(),
-                          ExpressionHelper.getPriority(topStackOperator) >= ExpressionHelper.getPriority(character) {
+                       ExpressionHelper.getPriority(topStackOperator) >= ExpressionHelper.getPriority(character) {
                         guard let topOperator = stackOperators.pop() else { break }
                         rpnForm.append(topOperator)
                     }
                     stackOperators.push(character)
                 }
             }
+        }
+        while let op = stackOperators.pop(){
+            rpnForm.append(op)
         }
         return rpnForm
     }
@@ -79,27 +81,19 @@ final class RPN{
     func calculateResult(_ output: [String])-> Double
     {
         var total: Double = 0.0
-
+        
         var stack: Stack<Double> = Stack<Double>()
         
-        var index = output.startIndex
-        
-        while index < output.endIndex {
-            var wholeNumber: String = ""
+        for character in output { 
             
-            if output[index].isNumber{
-                while index < output.endIndex && !ExpressionHelper.isDelimiter(output[index])
-                        && !ExpressionHelper.isOperator(output[index]){
-                    wholeNumber.append(output[index])
-                    index = output.index(after: index)
-                }
-                stack.push(Double(wholeNumber) ?? 0)
+            if Double(character) != nil{
+                stack.push(Double(character) ?? 0)
             }
             
-            else if ExpressionHelper.isOperator(output[index]){
+            else {
                 guard let lastNumber = stack.pop(), let preLastNumber = stack.pop() else { break }
                 
-                switch output[index] {
+                switch character {
                 case Op.addition.rawValue:
                     total = preLastNumber + lastNumber; break
                 case Op.subtraction.rawValue:
@@ -114,11 +108,9 @@ final class RPN{
                 let result = round(total * 1e10) / 1e10
                 stack.push(result)
             }
-            index = output.index(after: index)
         }
-        
         return stack.peek() ?? 0.0
     }
     
-
+    
 }

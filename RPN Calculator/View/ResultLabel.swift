@@ -23,3 +23,20 @@ final class ResultLabel: UILabel {
     }
 }
 
+final class LabelViewModel: UIView{
+    let containerView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    let labelScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.alwaysBounceHorizontal = false
+        
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+}

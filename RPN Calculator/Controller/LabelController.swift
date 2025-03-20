@@ -13,36 +13,36 @@ extension ViewController {
         
         guard var stringExpression = resultLabel.text else { return }
         
-        let characterReceived = Character(buttonInput)
+        let characterReceived = String(buttonInput)
         
         let arithmeticOperators: [Character] = ["+","-", "×", "÷"]
         
         let numberComponents = stringExpression.components(separatedBy: CharacterSet(charactersIn: "÷×-+()"))
         let lastDigit = numberComponents.last
-        var lastCharacter = stringExpression.last
         
-//        let allComponents = stringExpression.components(separatedBy: " ")
+        guard let lastCharacter = stringExpression.last else {return}
+        var last = String(lastCharacter)
         
         
         switch characterReceived {
         case Op.addition.rawValue, Op.subtraction.rawValue,
             Op.multiplication.rawValue, Op.division.rawValue:
             
-            if let last = stringExpression.last, last == Op.leftParenthesis.rawValue {
+            if let last = stringExpression.last, String(last) == Op.leftParenthesis.rawValue {
                 // Exception: Allow the negative sign after a left parenthesis.
                 if characterReceived == Op.subtraction.rawValue {
                     stringExpression.append(characterReceived)
                     resultLabel.text = stringExpression
                 }
             } else {
-                // If the last character is already an operator, remove it.
+
                 if let last = stringExpression.last, arithmeticOperators.contains(last) {
                     stringExpression.removeLast()
-                    if stringExpression.last == Op.leftParenthesis.rawValue{
+                    if String(last) == Op.leftParenthesis.rawValue{
                         break
                     }
                 }
-                if lastCharacter == Op.decimal.rawValue{
+                if last == Op.decimal.rawValue{
                     stringExpression.removeLast()
                 }
                 stringExpression.append(characterReceived)
@@ -53,12 +53,12 @@ extension ViewController {
         case Op.equalSign.rawValue:
             let rpn = RPN()
             
-            if lastCharacter == Op.leftParenthesis.rawValue{
-                while lastCharacter?.isNumber == false{
+            if last == Op.leftParenthesis.rawValue{
+                while Double(last) == nil{
                     print(stringExpression)
                     stringExpression.removeLast()
-                    lastCharacter = stringExpression.last
-                    //print(lastCharacter)
+                    let lastString = stringExpression.last?.description ?? ""
+                    last = lastString
                 }
             }
             
@@ -98,10 +98,10 @@ extension ViewController {
                 stringExpression = ""
                 resultLabel.text = stringExpression
             }
-            if lastCharacter == Op.decimal.rawValue{
+            if last == Op.decimal.rawValue{
                 stringExpression.removeLast()
             }
-            if (stringExpression.last?.isNumber == true) || stringExpression.last == Op.rightParenthesis.rawValue
+            if Double(last) != nil || last == Op.rightParenthesis.rawValue
             {
                 stringExpression.append(Op.multiplication.rawValue)
                 stringExpression.append(Op.leftParenthesis.rawValue)
@@ -112,7 +112,7 @@ extension ViewController {
             }
             
         case Op.rightParenthesis.rawValue:
-            if lastCharacter == Op.decimal.rawValue{
+            if last == Op.decimal.rawValue{
                 stringExpression.removeLast()
             }
             if let last = stringExpression.last, arithmeticOperators.contains(last) {
@@ -121,7 +121,7 @@ extension ViewController {
             if areParenthesesBalanced(in: stringExpression) {
                 return
             }
-            if lastCharacter == Op.leftParenthesis.rawValue{
+            if last == Op.leftParenthesis.rawValue{
                 return
             }
             stringExpression.append(characterReceived)
@@ -134,14 +134,13 @@ extension ViewController {
                 stringExpression.append("0")
                 stringExpression.append(characterReceived)
                 resultLabel.text = stringExpression
-//                return
             }
             else {
                 stringExpression.append(characterReceived)
                 resultLabel.text = stringExpression
             }
         default:
-            if lastDigit == "0", characterReceived.isNumber, stringExpression.first != "0"{
+            if lastDigit == "0", Double(characterReceived) != nil, stringExpression.first != "0"{
                 stringExpression.removeLast()
             }
             if stringExpression == "0" {
@@ -150,7 +149,7 @@ extension ViewController {
             if resultLabel.text == ""{
                 resultLabel.text = "0"
             }
-            if lastCharacter == Op.rightParenthesis.rawValue{
+            if last == Op.rightParenthesis.rawValue{
                 stringExpression.append(Op.multiplication.rawValue)
             }
             resultLabel.text = "\(stringExpression)\(buttonInput)"
@@ -158,13 +157,15 @@ extension ViewController {
         }
     }
     
+    //Можно Убрать
     /// Returns true if the expression has balanced parentheses.
     func areParenthesesBalanced(in expression: String) -> Bool {
         var count = 0
         for char in expression {
-            if char == Op.leftParenthesis.rawValue {
+            let character = String(char)
+            if character == Op.leftParenthesis.rawValue {
                 count += 1
-            } else if char == Op.rightParenthesis.rawValue {
+            } else if character == Op.rightParenthesis.rawValue {
                 count -= 1
             }
             // If at any point we have more right than left, it’s unbalanced.

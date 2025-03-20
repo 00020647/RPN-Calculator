@@ -9,11 +9,11 @@ import Foundation
 
 enum ExpressionHelper {
     
-    static func isDelimiter(_ symbol: String) -> Bool {
-        return " =".contains(symbol)
-    }
+//    static func isDelimiter(_ symbol: String) -> Bool {
+//        return " =".contains(symbol)
+//    }
 
-    static func isOperator(_ symbol: String) -> Bool {
+    static func isOperator(_ symbol: Character) -> Bool {
         return "+-÷×()".contains(symbol)
     }
 
