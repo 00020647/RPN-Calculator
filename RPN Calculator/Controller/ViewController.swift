@@ -9,7 +9,7 @@ import UIKit
 
 let resultLabel = ResultLabel()
 
-class ViewController: UIViewController, ButtonActionProtocol{
+class ViewController: UIViewController, ButtonActionProtocol, ExpressionHandling{
     
     let numberPad = NumberPad()
     
@@ -20,7 +20,6 @@ class ViewController: UIViewController, ButtonActionProtocol{
         view.backgroundColor = UIColor(red: 32/255, green: 39/255, blue: 44/255, alpha: 1)
         setupUI()
         fetchData()
-        print(rpn.calculate("56-0.2-0.5"))
     }
     
     
@@ -35,5 +34,46 @@ class ViewController: UIViewController, ButtonActionProtocol{
         numberPad.configureButtons(with: buttonCharacters)
         numberPad.delegate = self
         view.addSubview(numberPad)
+    }
+}
+
+extension ViewController {
+    
+    func btnReceiver(buttonInput: String) {
+        
+        guard var stringExpression = resultLabel.text else { return }
+        let characterReceived = buttonInput
+        
+        switch characterReceived {
+        case Op.addition.rawValue, Op.subtraction.rawValue,
+             Op.multiplication.rawValue, Op.division.rawValue:
+            
+            stringExpression = processOperator(characterReceived, for: &stringExpression)
+            resultLabel.text = stringExpression
+            
+        case Op.equalSign.rawValue:
+            stringExpression = processEqual(for: &stringExpression)
+            resultLabel.text = stringExpression
+        case Op.deleteLast.rawValue:
+            stringExpression = processDeleteLast(for: &stringExpression)
+            resultLabel.text = stringExpression
+            
+        case Op.eraseAll.rawValue:
+            stringExpression = processEraseAll(for: &stringExpression)
+            resultLabel.text = stringExpression
+            
+        case Op.leftParenthesis.rawValue, Op.rightParenthesis.rawValue:
+            stringExpression = processParenthesis(characterReceived, for: &stringExpression)
+            resultLabel.text = stringExpression
+            
+        case Op.decimal.rawValue:
+            stringExpression = processDecimal(for: &stringExpression)
+            resultLabel.text = stringExpression
+            
+        default:
+            // Assume default case is for numbers.
+            stringExpression = processNumber(characterReceived, for: &stringExpression)
+            resultLabel.text = stringExpression
+        }
     }
 }

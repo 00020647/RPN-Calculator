@@ -46,4 +46,16 @@ enum Op: String {
     case decimal = "."
 }
 
+func areParenthesesBalanced(in expression: String) -> Bool {
+    var count = 0
+    for char in expression {
+        if String(char) == Op.leftParenthesis.rawValue {
+            count += 1
+        } else if String(char) == Op.rightParenthesis.rawValue {
+            count -= 1
+        }
+        if count < 0 { return false }
+    }
+    return count == 0
+}
 

@@ -16,25 +16,24 @@ final class RPN{
         return result
     }
     
-    
     func stringToArray(_ input: String)-> [String]{
         var array: [String] = []
-        var number = String()
+        var numberContainer = String()
         
         for element in input{
             if ExpressionHelper.isOperator(element) == false {
-                number.append(element)
+                numberContainer.append(element)
             }
             else{
-                if !number.isEmpty {
-                    array.append(number)
-                    number.removeAll()
+                if !numberContainer.isEmpty {
+                    array.append(numberContainer)
+                    numberContainer.removeAll()
                 }
                 array.append(String(element))
             }
         }
-        if !number.isEmpty {
-            array.append(number)
+        if !numberContainer.isEmpty {
+            array.append(numberContainer)
         }
         return array
     }
@@ -56,9 +55,10 @@ final class RPN{
                     
                 case Op.rightParenthesis.rawValue:
                     while let top = stackOperators.peek(), top != Op.leftParenthesis.rawValue {
-                        rpnForm.append(stackOperators.pop()!)
+                        guard let canBePopped = stackOperators.pop() else {break}
+                        rpnForm.append(canBePopped)
                     }
-                    // Pop and discard the left parenthesis.
+                    // What the fuck is this ChatGPt
                     _ = stackOperators.pop()
                 default:
                     while let topStackOperator = stackOperators.peek(),
