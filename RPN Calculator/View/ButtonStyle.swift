@@ -16,6 +16,7 @@ final class ButtonStyle: UIButton {
     
     static func createButton(with digitChar: String) -> ButtonStyle {
         let button = ButtonStyle()
+        //Rename
         button.setTitle(digitChar, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.titleLabel?.textAlignment = .center
@@ -25,6 +26,7 @@ final class ButtonStyle: UIButton {
         
         switch button.titleLabel?.text ?? "" {
         case "÷", "×", "+", "-":
+            //Enums for colors
             button.backgroundColor = UIColor(red: 4/255, green: 199/255, blue: 191/255, alpha: 1.0)
         case "(", ")":
             button.backgroundColor = UIColor(red: 165/255, green: 165/255, blue: 165/255, alpha: 1.0)

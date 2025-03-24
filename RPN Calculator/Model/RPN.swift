@@ -19,24 +19,37 @@ final class RPN{
     func stringToArray(_ input: String)-> [String]{
         var array: [String] = []
         var numberContainer = String()
+        var lastString: String? = nil
         
         for element in input{
-            if ExpressionHelper.isOperator(element) == false {
+            if ExpressionHelper.isOperator(element){
+                if element == Character(Op.subtraction.rawValue), lastString == nil {
+                    numberContainer.append(element)
+                }
+                else if element == Character(Op.subtraction.rawValue), let last = lastString, ExpressionHelper.isOperator(Character(last)){
+                    numberContainer.append(element)
+                }
+                else{
+                    if !numberContainer.isEmpty {
+                        array.append(numberContainer)
+                        numberContainer.removeAll()
+                    }
+                    array.append(String(element))
+                }
+                
+            }else {
                 numberContainer.append(element)
             }
-            else{
-                if !numberContainer.isEmpty {
-                    array.append(numberContainer)
-                    numberContainer.removeAll()
-                }
-                array.append(String(element))
-            }
+            lastString = String(element)
         }
+        
         if !numberContainer.isEmpty {
             array.append(numberContainer)
         }
         return array
     }
+    
+    
     
     
     //MARK: - Converting to RPN
@@ -62,7 +75,7 @@ final class RPN{
                     _ = stackOperators.pop()
                 default:
                     while let topStackOperator = stackOperators.peek(),
-                       ExpressionHelper.getPriority(topStackOperator) >= ExpressionHelper.getPriority(character) {
+                          ExpressionHelper.getPriority(topStackOperator) >= ExpressionHelper.getPriority(character) {
                         guard let topOperator = stackOperators.pop() else { break }
                         rpnForm.append(topOperator)
                     }
@@ -84,7 +97,7 @@ final class RPN{
         
         var stack: Stack<Double> = Stack<Double>()
         
-        for character in output { 
+        for character in output {
             
             if Double(character) != nil{
                 stack.push(Double(character) ?? 0)

@@ -15,27 +15,29 @@ extension NumberPad {
         mainStackView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            mainStackView.topAnchor.constraint(equalTo: superview.centerYAnchor, constant: -80),
+//            mainStackView.topAnchor.constraint(equalTo: superview.centerYAnchor, constant: -80),
             mainStackView.leadingAnchor.constraint(equalTo: superview.leadingAnchor, constant: 20),
             mainStackView.trailingAnchor.constraint(equalTo: superview.trailingAnchor, constant: -20),
+            mainStackView.bottomAnchor.constraint(equalTo: superview.bottomAnchor, constant: -20),
             mainStackView.heightAnchor.constraint(equalTo: mainStackView.widthAnchor, multiplier: 5/4)
         ])
 
         superview.addSubview(mainStackView)
     }
 }
-
+let numberPad = NumberPad()
+let labelView = LabelViewModel()
 extension ViewController {
     func setupUI() {
-        let labelView = LabelViewModel()
+       
         view.addSubview(labelView.labelScrollView)
 
         resultLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            labelView.labelScrollView.topAnchor.constraint(equalTo: view.topAnchor, constant: 200),
             labelView.labelScrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             labelView.labelScrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            labelView.labelScrollView.bottomAnchor.constraint(equalTo: view.topAnchor, constant: 100),
             labelView.labelScrollView.heightAnchor.constraint(equalToConstant: 80)
         ])
         

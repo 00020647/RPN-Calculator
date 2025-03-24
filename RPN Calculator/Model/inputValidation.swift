@@ -23,16 +23,30 @@ protocol ExpressionHandling {
 }
 
 extension ExpressionHandling {
-    
     func processOperator(_ op: String, for expression: inout String) -> String {
-        
-        let arithmeticOperators: [Character] = ["+","-", "×", "÷"]
-        
+        didCalculate = false
+        if let last = expression.last{
+            if !ExpressionHelper.isOperator(Character(op)) || !last.isNumber{
+                expression.removeAll()
+                expression.append("0")
+            }
+        }
         if let lastChar = expression.last, String(lastChar) == Op.leftParenthesis.rawValue {
             if op == Op.subtraction.rawValue {
                 expression.append(op)
             }
         } else {
+            if expression.count >= 2 {
+                let preLastIndex = expression.index(expression.endIndex, offsetBy: -2)
+                let preLastChar = expression[preLastIndex]
+                // Now you can use preLastChar as needed.
+                if let last = expression.last, Op.subtraction.rawValue == String(last) {
+                    if String(preLastChar) == Op.leftParenthesis.rawValue{
+                        print("Opa")
+                        return expression
+                    }
+                }
+            }
             if let last = expression.last, arithmeticOperators.contains(last) {
                 expression.removeLast()
             }
@@ -46,12 +60,13 @@ extension ExpressionHandling {
     
     func processEqual(for expression: inout String) -> String {
         guard var last = expression.last else {return "0"}
+        didCalculate = true
         
         while String(last) == Op.leftParenthesis.rawValue{
             expression.removeLast()
             last = expression.last ?? "0"
         }
-        if ExpressionHelper.isOperator(last){
+        if ExpressionHelper.isOperator(last), last != Character(Op.rightParenthesis.rawValue){
             expression.removeLast()
         }
         while !areParenthesesBalanced(in: expression) {
@@ -59,15 +74,31 @@ extension ExpressionHandling {
         }
         print(expression)
         let rpn = RPN()
-        let result = rpn.calculate(expression)
-        if result.truncatingRemainder(dividingBy: 1) == 0 {
-            let formatter = NumberFormatter()
-            formatter.minimumFractionDigits = 0
-            formatter.numberStyle = .none
-            return formatter.string(from: NSNumber(value: result)) ?? "\(result)"
-        }
         
-        return "\(result)"
+
+        let result = rpn.calculate(expression)
+        
+        let formatter = NumberFormatter()
+        print(result)
+        
+        let myResult = String(result)
+        
+        if myResult.count > 9 {
+                formatter.numberStyle = .scientific
+                formatter.maximumFractionDigits = 9
+                return formatter.string(from: NSNumber(value: result)) ?? "\(result)"
+            }
+            
+            // For whole numbers, set no fraction digits.
+            if result.truncatingRemainder(dividingBy: 1) == 0 && myResult.count < 11 {
+                formatter.numberStyle = .none
+                formatter.minimumFractionDigits = 0
+                formatter.maximumFractionDigits = 0
+                return formatter.string(from: NSNumber(value: result)) ?? "\(result)"
+            }
+        
+        
+        return String(result)
     }
     
     func processDeleteLast(for expression: inout String) -> String {
@@ -95,11 +126,18 @@ extension ExpressionHandling {
             if let last = expression.last, Double(String(last)) != nil || String(last) == Op.rightParenthesis.rawValue {
                 expression.append(Op.multiplication.rawValue)
             }
+            
         } else if paren == Op.rightParenthesis.rawValue {
+            
             if let last = expression.last, last == Character(Op.decimal.rawValue) {
                 expression.removeLast()
             }
-            let arithmeticOperators: [Character] = ["+","-", "×", "÷"]
+            if areParenthesesBalanced(in: expression){
+                return expression
+            }
+            else if let last = expression.last, Op.leftParenthesis.rawValue.contains(last){
+                return expression
+            }
             if let last = expression.last, arithmeticOperators.contains(last) {
                 expression.removeLast()
             }
@@ -122,6 +160,10 @@ extension ExpressionHandling {
     }
     
     func processNumber(_ number: String, for expression: inout String) -> String {
+        if didCalculate == true{
+            expression.removeAll()
+            didCalculate = false
+        }
         // Avoid leading zero issues.
         let numberComponents = expression.components(separatedBy: CharacterSet(charactersIn: "÷×-+()"))
         if let lastComponent = numberComponents.last, lastComponent == "0", Double(number) != nil, expression.first != "0" {

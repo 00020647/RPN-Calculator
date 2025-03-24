@@ -46,6 +46,8 @@ enum Op: String {
     case decimal = "."
 }
 
+let arithmeticOperators: [Character] = ["+","-", "×", "÷"]
+
 func areParenthesesBalanced(in expression: String) -> Bool {
     var count = 0
     for char in expression {
@@ -59,3 +61,4 @@ func areParenthesesBalanced(in expression: String) -> Bool {
     return count == 0
 }
 
+var didCalculate: Bool = false

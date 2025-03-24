@@ -23,6 +23,8 @@ class ViewController: UIViewController, ButtonActionProtocol, ExpressionHandling
     }
     
     
+    //TODO: Multiply by utself if no second operand
+    
     func fetchData(){
         let buttonCharacters = [
             ["A","(",")","÷"],
@@ -54,6 +56,8 @@ extension ViewController {
         case Op.equalSign.rawValue:
             stringExpression = processEqual(for: &stringExpression)
             resultLabel.text = stringExpression
+            
+            
         case Op.deleteLast.rawValue:
             stringExpression = processDeleteLast(for: &stringExpression)
             resultLabel.text = stringExpression
@@ -71,7 +75,7 @@ extension ViewController {
             resultLabel.text = stringExpression
             
         default:
-            // Assume default case is for numbers.
+
             stringExpression = processNumber(characterReceived, for: &stringExpression)
             resultLabel.text = stringExpression
         }
