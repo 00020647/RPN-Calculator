@@ -7,15 +7,15 @@
 
 import UIKit
 
-final class ButtonStyle: UIButton {
+final class CustomButton: UIButton {
     
     override func layoutSubviews() {
         super.layoutSubviews()
         layer.cornerRadius = self.bounds.width / 2
     }
     
-    static func createButton(with digitChar: String) -> ButtonStyle {
-        let button = ButtonStyle()
+    static func createButton(with digitChar: String) -> CustomButton {
+        let button = CustomButton()
         //Rename
         button.setTitle(digitChar, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
