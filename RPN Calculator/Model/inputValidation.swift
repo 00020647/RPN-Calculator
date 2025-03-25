@@ -24,13 +24,10 @@ protocol ExpressionHandling {
 
 extension ExpressionHandling {
     func processOperator(_ op: String, for expression: inout String) -> String {
-        didCalculate = false
-        if let last = expression.last{
-            if !ExpressionHelper.isOperator(Character(op)) || !last.isNumber{
-                expression.removeAll()
-                expression.append("0")
-            }
+        if isResultInvalid(expression) {
+            return expression
         }
+        didCalculate = false
         if let lastChar = expression.last, String(lastChar) == Op.leftParenthesis.rawValue {
             if op == Op.subtraction.rawValue {
                 expression.append(op)
@@ -39,12 +36,18 @@ extension ExpressionHandling {
             if expression.count >= 2 {
                 let preLastIndex = expression.index(expression.endIndex, offsetBy: -2)
                 let preLastChar = expression[preLastIndex]
-                // Now you can use preLastChar as needed.
                 if let last = expression.last, Op.subtraction.rawValue == String(last) {
                     if String(preLastChar) == Op.leftParenthesis.rawValue{
-                        print("Opa")
                         return expression
                     }
+                }
+            }
+            if expression == "0" || expression == "-" {
+                if op == Op.subtraction.rawValue{
+                    expression.removeLast()
+                    expression.append(op)
+                }else{
+                    expression = "0"
                 }
             }
             if let last = expression.last, arithmeticOperators.contains(last) {
@@ -59,49 +62,56 @@ extension ExpressionHandling {
     }
     
     func processEqual(for expression: inout String) -> String {
-        guard var last = expression.last else {return "0"}
+        guard var last = expression.last else { return "0" }
         didCalculate = true
-        
-        while String(last) == Op.leftParenthesis.rawValue{
+
+        while String(last) == Op.leftParenthesis.rawValue {
             expression.removeLast()
             last = expression.last ?? "0"
         }
-        if ExpressionHelper.isOperator(last), last != Character(Op.rightParenthesis.rawValue){
-            expression.removeLast()
+        
+        while ExpressionHelper.isOperator(last), last != Character(Op.rightParenthesis.rawValue) {
+            return expression
         }
-        while !areParenthesesBalanced(in: expression) {
+        
+        while !areParenthesesBalanced(in: expression), last != Character(Op.leftParenthesis.rawValue) {
             expression.append(Op.rightParenthesis.rawValue)
         }
-        print(expression)
+        
+        print("Expression: \(expression)")
         let rpn = RPN()
         
-
-        let result = rpn.calculate(expression)
+        let getValue: Decimal = rpn.calculate(expression)
+        
+        let result: Decimal = getValue.isZero ? Decimal(0) : getValue
         
         let formatter = NumberFormatter()
-        print(result)
         
-        let myResult = String(result)
+        let nsResult = NSDecimalNumber(decimal: result)
+        let resultCount = nsResult.stringValue
+        print("Result: \(result)  String: \(resultCount)")
         
-        if myResult.count > 9 {
-                formatter.numberStyle = .scientific
-                formatter.maximumFractionDigits = 9
-                return formatter.string(from: NSNumber(value: result)) ?? "\(result)"
-            }
-            
-            // For whole numbers, set no fraction digits.
-            if result.truncatingRemainder(dividingBy: 1) == 0 && myResult.count < 11 {
-                formatter.numberStyle = .none
-                formatter.minimumFractionDigits = 0
-                formatter.maximumFractionDigits = 0
-                return formatter.string(from: NSNumber(value: result)) ?? "\(result)"
-            }
+        if resultCount.count >= 9 {
+            formatter.numberStyle = .scientific
+            formatter.maximumFractionDigits = 9
+            return formatter.string(from: NSNumber(value: nsResult.doubleValue)) ?? nsResult.stringValue
+        }
         
+        if nsResult.doubleValue.truncatingRemainder(dividingBy: 1) == 0 && resultCount.count < 10 {
+            formatter.numberStyle = .none
+            formatter.minimumFractionDigits = 0
+            formatter.maximumFractionDigits = 0
+            return formatter.string(from: NSNumber(value: nsResult.doubleValue)) ?? nsResult.stringValue
+        }
         
-        return String(result)
+        return nsResult.stringValue
     }
+
     
     func processDeleteLast(for expression: inout String) -> String {
+        if isResultInvalid(expression) {
+            return expression
+        }
         if expression.isEmpty {
             return "0"
         } else if expression.count > 1 {
@@ -118,6 +128,9 @@ extension ExpressionHandling {
     }
     
     func processParenthesis(_ paren: String, for expression: inout String) -> String {
+        if isResultInvalid(expression) {
+            return expression
+        }
         if paren == Op.leftParenthesis.rawValue {
             if expression == "0" { expression = "" }
             if let last = expression.last, last == Character(Op.decimal.rawValue) {
@@ -135,7 +148,7 @@ extension ExpressionHandling {
             if areParenthesesBalanced(in: expression){
                 return expression
             }
-            else if let last = expression.last, Op.leftParenthesis.rawValue.contains(last){
+            else if let last = expression.last, arithmeticOperators.contains(last){
                 return expression
             }
             if let last = expression.last, arithmeticOperators.contains(last) {
@@ -147,6 +160,9 @@ extension ExpressionHandling {
     }
     
     func processDecimal(for expression: inout String) -> String {
+        if isResultInvalid(expression) {
+            return expression
+        }
         let numberComponents = expression.components(separatedBy: CharacterSet(charactersIn: "÷×-+()"))
         
         if let lastComponent = numberComponents.last, lastComponent.contains(Op.decimal.rawValue) {
@@ -160,18 +176,19 @@ extension ExpressionHandling {
     }
     
     func processNumber(_ number: String, for expression: inout String) -> String {
+        if isResultInvalid(expression) {
+            return expression
+        }
         if didCalculate == true{
             expression.removeAll()
             didCalculate = false
         }
-        // Avoid leading zero issues.
         let numberComponents = expression.components(separatedBy: CharacterSet(charactersIn: "÷×-+()"))
         if let lastComponent = numberComponents.last, lastComponent == "0", Double(number) != nil, expression.first != "0" {
             expression.removeLast()
         }
         if expression == "0" { expression = "" }
         if let last = expression.last, String(last) == Op.rightParenthesis.rawValue {
-            // Insert implicit multiplication.
             expression.append(Op.multiplication.rawValue)
         }
         expression.append(number)

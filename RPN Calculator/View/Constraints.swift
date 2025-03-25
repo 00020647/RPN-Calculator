@@ -10,39 +10,40 @@ import UIKit
 extension NumberPad {
     override func layoutSubviews() {
         super.layoutSubviews()
-        guard let superview = superview else { return }
         
-        mainStackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-//            mainStackView.topAnchor.constraint(equalTo: superview.centerYAnchor, constant: -80),
-            mainStackView.leadingAnchor.constraint(equalTo: superview.leadingAnchor, constant: 20),
-            mainStackView.trailingAnchor.constraint(equalTo: superview.trailingAnchor, constant: -20),
-            mainStackView.bottomAnchor.constraint(equalTo: superview.bottomAnchor, constant: -20),
-            mainStackView.heightAnchor.constraint(equalTo: mainStackView.widthAnchor, multiplier: 5/4)
-        ])
-
-        superview.addSubview(mainStackView)
     }
 }
 let numberPad = NumberPad()
 let labelView = LabelViewModel()
 extension ViewController {
     func setupUI() {
-       
+        // First, add the subviews to the view hierarchy.
+        view.addSubview(numberPad.mainStackView)
         view.addSubview(labelView.labelScrollView)
-
-        resultLabel.translatesAutoresizingMaskIntoConstraints = false
+        labelView.labelScrollView.addSubview(labelView.containerView)
+        labelView.containerView.addSubview(resultLabel)
         
+        // Now disable autoresizing mask translation.
+        numberPad.mainStackView.translatesAutoresizingMaskIntoConstraints = false
+        resultLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        // Activate constraints for numberPad.mainStackView.
+        NSLayoutConstraint.activate([
+            numberPad.mainStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            numberPad.mainStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            numberPad.mainStackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20),
+            numberPad.mainStackView.heightAnchor.constraint(equalTo: numberPad.mainStackView.widthAnchor, multiplier: 5/4),
+        ])
+        
+        // Activate constraints for labelView.labelScrollView.
         NSLayoutConstraint.activate([
             labelView.labelScrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             labelView.labelScrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            labelView.labelScrollView.bottomAnchor.constraint(equalTo: view.topAnchor, constant: 100),
+            labelView.labelScrollView.bottomAnchor.constraint(equalTo: numberPad.mainStackView.topAnchor),
             labelView.labelScrollView.heightAnchor.constraint(equalToConstant: 80)
         ])
         
-        
-        labelView.labelScrollView.addSubview(labelView.containerView)
+        // Activate constraints for labelView.containerView.
         NSLayoutConstraint.activate([
             labelView.containerView.topAnchor.constraint(equalTo: labelView.labelScrollView.topAnchor),
             labelView.containerView.leadingAnchor.constraint(equalTo: labelView.labelScrollView.leadingAnchor),
@@ -51,7 +52,7 @@ extension ViewController {
             labelView.containerView.widthAnchor.constraint(greaterThanOrEqualTo: labelView.labelScrollView.frameLayoutGuide.widthAnchor)
         ])
         
-        labelView.containerView.addSubview(resultLabel)
+        // Activate constraints for resultLabel.
         NSLayoutConstraint.activate([
             resultLabel.topAnchor.constraint(equalTo: labelView.containerView.topAnchor),
             resultLabel.bottomAnchor.constraint(equalTo: labelView.containerView.bottomAnchor),
@@ -61,8 +62,8 @@ extension ViewController {
         
         labelView.labelScrollView.transform = CGAffineTransform(scaleX: -1, y: 1)
         labelView.containerView.transform = CGAffineTransform(scaleX: -1, y: 1)
-        
     }
+
 }
 
 

@@ -9,23 +9,19 @@ import Foundation
 
 enum ExpressionHelper {
     
-//    static func isDelimiter(_ symbol: String) -> Bool {
-//        return " =".contains(symbol)
-//    }
-
     static func isOperator(_ symbol: Character) -> Bool {
         return "+-÷×()".contains(symbol)
     }
 
     static func getPriority(_ symbol: String) -> Int {
         switch symbol {
-        case "(":
+        case Op.leftParenthesis.rawValue:
             return 0
-        case ")":
+        case Op.rightParenthesis.rawValue:
             return 1
-        case "+", "-":
+        case Op.addition.rawValue, Op.subtraction.rawValue:
             return 2
-        case "×", "÷":
+        case Op.multiplication.rawValue, Op.division.rawValue:
             return 3
         default:
             return 4
@@ -62,3 +58,9 @@ func areParenthesesBalanced(in expression: String) -> Bool {
 }
 
 var didCalculate: Bool = false
+
+
+func isResultInvalid(_ expression: String) -> Bool {
+    let lowercased = expression.lowercased()
+    return lowercased == "nan" || lowercased == "inf" || lowercased == "-inf"
+}

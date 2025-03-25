@@ -9,48 +9,58 @@ import Foundation
 
 final class RPN{
     //MARK: - Parsing Values between Methods
-    func calculate(_ input: String)-> Double{
+    func calculate(_ input: String)-> Decimal{
         let arrayOfCharacters: [String] = stringToArray(input)
         let rpnExpression: [String] = convertToRPN(arrayOfCharacters)
-        let result: Double = calculateResult(rpnExpression)
+        let result: Decimal = calculateResult(rpnExpression)
         return result
     }
     
-    func stringToArray(_ input: String)-> [String]{
+    func stringToArray(_ input: String) -> [String] {
         var array: [String] = []
-        var numberContainer = String()
-        var lastString: String? = nil
-        
-        for element in input{
-            if ExpressionHelper.isOperator(element){
-                if element == Character(Op.subtraction.rawValue), lastString == nil {
-                    numberContainer.append(element)
-                }
-                else if element == Character(Op.subtraction.rawValue), let last = lastString, ExpressionHelper.isOperator(Character(last)){
-                    numberContainer.append(element)
-                }
-                else{
+        var numberContainer = ""
+        var lastChar: Character? = nil
+
+        for element in input {
+            if ExpressionHelper.isOperator(element) {
+                if element == Character(Op.subtraction.rawValue) {
+                    if lastChar == nil ||
+                        ExpressionHelper.isOperator(lastChar!) ||
+                        lastChar == Character(Op.leftParenthesis.rawValue) {
+                        
+                        if !numberContainer.isEmpty {
+                            array.append(numberContainer)
+                            numberContainer = ""
+                        }
+                        array.append("0")
+                        array.append(String(element))
+                    } else {
+                        if !numberContainer.isEmpty {
+                            array.append(numberContainer)
+                            numberContainer = ""
+                        }
+                        array.append(String(element))
+                    }
+                } else {
                     if !numberContainer.isEmpty {
                         array.append(numberContainer)
-                        numberContainer.removeAll()
+                        numberContainer = ""
                     }
                     array.append(String(element))
                 }
-                
-            }else {
+            } else {
                 numberContainer.append(element)
             }
-            lastString = String(element)
+            lastChar = element
         }
         
         if !numberContainer.isEmpty {
             array.append(numberContainer)
         }
+        
         return array
     }
-    
-    
-    
+
     
     //MARK: - Converting to RPN
     func convertToRPN(_ input: [String]) -> [String] {
@@ -71,7 +81,6 @@ final class RPN{
                         guard let canBePopped = stackOperators.pop() else {break}
                         rpnForm.append(canBePopped)
                     }
-                    // What the fuck is this ChatGPt
                     _ = stackOperators.pop()
                 default:
                     while let topStackOperator = stackOperators.peek(),
@@ -91,16 +100,16 @@ final class RPN{
     
     
     //MARK: - Calculating result
-    func calculateResult(_ output: [String])-> Double
+    func calculateResult(_ output: [String])-> Decimal
     {
-        var total: Double = 0.0
+        var total: Decimal = 0.0
         
-        var stack: Stack<Double> = Stack<Double>()
+        var stack: Stack<Decimal> = Stack<Decimal>()
         
         for character in output {
             
-            if Double(character) != nil{
-                stack.push(Double(character) ?? 0)
+            if let decimalNumber = Double(character) {
+                stack.push(Decimal(decimalNumber))
             }
             
             else {
@@ -118,7 +127,7 @@ final class RPN{
                 default:
                     break
                 }
-                let result = round(total * 1e10) / 1e10
+                let result = total
                 stack.push(result)
             }
         }

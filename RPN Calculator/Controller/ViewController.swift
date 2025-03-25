@@ -75,7 +75,10 @@ extension ViewController {
             resultLabel.text = stringExpression
             
         default:
-
+            if didCalculate == true{
+                stringExpression.removeAll()
+                didCalculate = false
+            }
             stringExpression = processNumber(characterReceived, for: &stringExpression)
             resultLabel.text = stringExpression
         }
