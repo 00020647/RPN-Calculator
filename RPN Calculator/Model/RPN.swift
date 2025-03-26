@@ -16,9 +16,10 @@ final class RPN{
         return result
     }
     
+    //MARK: - Append each element to Array
     func stringToArray(_ input: String) -> [String] {
         var array: [String] = []
-        var numberContainer = ""
+        var numberContainer = String()
         var lastChar: Character? = nil
 
         for element in input {
@@ -30,21 +31,21 @@ final class RPN{
                         
                         if !numberContainer.isEmpty {
                             array.append(numberContainer)
-                            numberContainer = ""
+                            numberContainer.removeAll()
                         }
-                        array.append("0")
+                        array.append(Op.zero.rawValue)
                         array.append(String(element))
                     } else {
                         if !numberContainer.isEmpty {
                             array.append(numberContainer)
-                            numberContainer = ""
+                            numberContainer.removeAll()
                         }
                         array.append(String(element))
                     }
                 } else {
                     if !numberContainer.isEmpty {
                         array.append(numberContainer)
-                        numberContainer = ""
+                        numberContainer.removeAll()
                     }
                     array.append(String(element))
                 }

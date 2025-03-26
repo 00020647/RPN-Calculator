@@ -9,7 +9,7 @@ import UIKit
 
 let resultLabel = ResultLabel()
 
-class ViewController: UIViewController, ButtonActionProtocol, ExpressionHandling{
+final class ViewController: UIViewController, ButtonActionProtocol, ExpressionHandling{
     
     let numberPad = NumberPad()
     
@@ -17,7 +17,6 @@ class ViewController: UIViewController, ButtonActionProtocol, ExpressionHandling
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(red: 32/255, green: 39/255, blue: 44/255, alpha: 1)
         setupUI()
         fetchData()
     }
@@ -26,20 +25,9 @@ class ViewController: UIViewController, ButtonActionProtocol, ExpressionHandling
     //TODO: Multiply by utself if no second operand
     
     func fetchData(){
-        let buttonCharacters = [
-            ["A","(",")","÷"],
-            ["7","8","9","×"],
-            ["4","5","6","-"],
-            ["1","2","3","+"],
-            ["⌫", "0",".", "="]
-        ]
         numberPad.configureButtons(with: buttonCharacters)
         numberPad.delegate = self
-        view.addSubview(numberPad)
     }
-}
-
-extension ViewController {
     
     func btnReceiver(buttonInput: String) {
         

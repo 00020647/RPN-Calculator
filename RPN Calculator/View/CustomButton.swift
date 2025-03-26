@@ -16,7 +16,7 @@ final class CustomButton: UIButton {
     
     static func createButton(with digitChar: String) -> CustomButton {
         let button = CustomButton()
-        //Rename
+        
         button.setTitle(digitChar, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.titleLabel?.textAlignment = .center
@@ -24,21 +24,15 @@ final class CustomButton: UIButton {
         button.setTitleColor(.white, for: .normal)
         
         
-        switch button.titleLabel?.text ?? "" {
-        case "÷", "×", "+", "-":
-            //Enums for colors
-            button.backgroundColor = UIColor(red: 4/255, green: 199/255, blue: 191/255, alpha: 1.0)
-        case "(", ")":
-            button.backgroundColor = UIColor(red: 165/255, green: 165/255, blue: 165/255, alpha: 1.0)
-        case "A":
-            button.backgroundColor = UIColor(red: 165/255, green: 165/255, blue: 165/255, alpha: 1.0)
+        switch button.titleLabel?.text{
+        case Op.addition.rawValue, Op.subtraction.rawValue, Op.multiplication.rawValue, Op.division.rawValue, Op.equalSign.rawValue:
+            button.backgroundColor = ColorEnum.Cyan.uiColor
+        case Op.leftParenthesis.rawValue, Op.rightParenthesis.rawValue,
+            Op.eraseAll.rawValue, Op.deleteLast.rawValue:
+            button.backgroundColor = ColorEnum.Gray.uiColor
         default:
-            button.backgroundColor = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1.0)
+            button.backgroundColor = ColorEnum.NumberColor.uiColor
         }
-        
         return button
     }
-}
-struct ButtonStyleViewModel {
-    let digitChar: String
 }

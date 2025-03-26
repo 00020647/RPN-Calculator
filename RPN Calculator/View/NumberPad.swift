@@ -15,8 +15,6 @@ final class NumberPad: UIStackView {
         stackView.alignment = .fill
         stackView.spacing = 10
         stackView.translatesAutoresizingMaskIntoConstraints = false
-
-        
         return stackView
     }()
     
@@ -33,7 +31,6 @@ final class NumberPad: UIStackView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        addSubview(mainStackView)
         clipsToBounds = true
     }
     
@@ -47,7 +44,7 @@ final class NumberPad: UIStackView {
             let rowStackView = createRowStackView()
             
             for character in row {
-                let button = ButtonStyle.createButton(with: character)
+                let button = CustomButton.createButton(with: character)
                 button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
                 rowStackView.addArrangedSubview(button)
             }
