@@ -91,7 +91,7 @@ extension ExpressionHandling {
         let nsResult = NSDecimalNumber(decimal: result)
         let resultCount = nsResult.stringValue
         print("Result: \(result)  String: \(resultCount)")
-        
+        didCalculate = true
         if resultCount.count >= 9 {
             formatter.numberStyle = .scientific
             formatter.maximumFractionDigits = 9
@@ -104,7 +104,7 @@ extension ExpressionHandling {
             formatter.maximumFractionDigits = 0
             return formatter.string(from: NSNumber(value: nsResult.doubleValue)) ?? nsResult.stringValue
         }
-        didCalculate = true
+        
         return nsResult.stringValue
     }
 
