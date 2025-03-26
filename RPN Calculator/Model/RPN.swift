@@ -33,7 +33,7 @@ final class RPN{
             if ExpressionHelper.isOperator(element) {
                 cleanContainer()
                 if element == Character(Op.subtraction.rawValue) {
-                    let isUnary = lastChar.map { ExpressionHelper.isOperator($0) || $0 == Character(Op.leftParenthesis.rawValue) } ?? true
+                    let isUnary = lastChar.map { $0 == Character(Op.leftParenthesis.rawValue) } ?? true
                     if isUnary {
                         array.append(Op.zero.rawValue)
                     }
@@ -51,7 +51,6 @@ final class RPN{
     //MARK: - Converting to RPN
     func convertToRPN(_ input: [String]) -> [String] {
         var rpnForm: [String] = []
-        
         var stackOperators: Stack<String> = Stack<String>()
         
         for character in input {
@@ -81,7 +80,6 @@ final class RPN{
         while let op = stackOperators.pop(){
             rpnForm.append(op)
         }
-        print(rpnForm)
         return rpnForm
     }
     
@@ -89,7 +87,6 @@ final class RPN{
     func calculateResult(_ output: [String])-> Decimal
     {
         var total: Decimal = 0.0
-        
         var stack: Stack<Decimal> = Stack<Decimal>()
         
         for character in output {
