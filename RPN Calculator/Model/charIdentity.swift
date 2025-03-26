@@ -65,7 +65,7 @@ var didCalculate: Bool = false
 
 func isResultInvalid(_ expression: String) -> Bool {
     let lowercased = expression.lowercased()
-    return lowercased == "nan" || lowercased == "inf" || lowercased == "-inf"
+    return lowercased == "nan" 
 }
 
 func disableOperLeftParenthesis(_ expression: String) -> Bool {
