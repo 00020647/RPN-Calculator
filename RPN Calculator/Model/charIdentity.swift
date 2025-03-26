@@ -80,7 +80,6 @@ func disableOperLeftParenthesis(_ expression: String) -> Bool {
     return false
 }
 
-
 let buttonCharacters = [
     ["A","(",")","÷"],
     ["7","8","9","×"],
@@ -88,3 +87,4 @@ let buttonCharacters = [
     ["1","2","3","+"],
     ["⌫", "0",".", "="]
 ]
+

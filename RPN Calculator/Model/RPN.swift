@@ -28,7 +28,7 @@ final class RPN{
                 numberContainer.removeAll()
             }
         }
-
+        
         for element in input {
             if ExpressionHelper.isOperator(element) {
                 cleanContainer()
@@ -47,8 +47,6 @@ final class RPN{
         cleanContainer()
         return array
     }
-
-
 
     //MARK: - Converting to RPN
     func convertToRPN(_ input: [String]) -> [String] {
@@ -87,7 +85,6 @@ final class RPN{
         return rpnForm
     }
     
-    
     //MARK: - Calculating result
     func calculateResult(_ output: [String])-> Decimal
     {
@@ -121,6 +118,4 @@ final class RPN{
         }
         return stack.peek() ?? 0.0
     }
-    
-    
 }

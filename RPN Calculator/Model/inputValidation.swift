@@ -75,8 +75,6 @@ extension ExpressionHandling {
             expression.append(Op.rightParenthesis.rawValue)
         }
         
-        print("Expression: \(expression)")
-        
         let rpn = RPN()
         let formatter = NumberFormatter()
         
@@ -89,6 +87,7 @@ extension ExpressionHandling {
         let result = NSDecimalNumber(decimal: getValue)
         let resultCount = result.stringValue
         
+        print("Expression: \(expression)")
         print("Result: \(result)")
         
         if resultCount.count >= 9 {
@@ -112,11 +111,10 @@ extension ExpressionHandling {
         if isResultInvalid(expression) {
             return expression
         }
-        if expression.isEmpty {
-            return Op.zero.rawValue
-        } else if expression.count > 1 {
+        if expression.count > 1 {
             expression.removeLast()
-        } else {
+        }
+        else {
             expression = Op.zero.rawValue
         }
         return expression
@@ -184,10 +182,12 @@ extension ExpressionHandling {
             didCalculate = false
         }
         let numberComponents = expression.components(separatedBy: CharacterSet(charactersIn: allOperators))
-        if let lastComponent = numberComponents.last, lastComponent == Op.zero.rawValue, Double(number) != nil, expression.first != Character(Op.zero.rawValue) {
+        if let lastComponent = numberComponents.last, lastComponent == Op.zero.rawValue, Double(number) != nil {
             expression.removeLast()
         }
-        if expression == Op.zero.rawValue { expression.removeAll() }
+        if expression == Op.zero.rawValue {
+            expression.removeAll()
+        }
         if let last = expression.last, String(last) == Op.rightParenthesis.rawValue {
             expression.append(Op.multiplication.rawValue)
         }
