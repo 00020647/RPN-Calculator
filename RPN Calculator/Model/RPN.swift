@@ -18,51 +18,36 @@ final class RPN{
     
     //MARK: - Append each element to Array
     func stringToArray(_ input: String) -> [String] {
-        var array: [String] = []
+        var array = [String]()
         var numberContainer = String()
         var lastChar: Character? = nil
 
+        func cleanContainer() {
+            if !numberContainer.isEmpty {
+                array.append(numberContainer)
+                numberContainer.removeAll()
+            }
+        }
+
         for element in input {
             if ExpressionHelper.isOperator(element) {
+                cleanContainer()
                 if element == Character(Op.subtraction.rawValue) {
-                    if lastChar == nil ||
-                        ExpressionHelper.isOperator(lastChar ?? "0") ||
-                        lastChar == Character(Op.leftParenthesis.rawValue) {
-                        
-                        if !numberContainer.isEmpty {
-                            array.append(numberContainer)
-                            numberContainer.removeAll()
-                        }
+                    let isUnary = lastChar.map { ExpressionHelper.isOperator($0) || $0 == Character(Op.leftParenthesis.rawValue) } ?? true
+                    if isUnary {
                         array.append(Op.zero.rawValue)
-                        array.append(String(element))
-                    } else {
-                        if !numberContainer.isEmpty {
-                            array.append(numberContainer)
-                            numberContainer.removeAll()
-                        }
-                        array.append(String(element))
                     }
-                } else {
-                    if !numberContainer.isEmpty {
-                        array.append(numberContainer)
-                        numberContainer.removeAll()
-                    }
-                    array.append(String(element))
                 }
+                array.append(String(element))
             } else {
                 numberContainer.append(element)
             }
             lastChar = element
         }
-        
-        if !numberContainer.isEmpty {
-            array.append(numberContainer)
-        }
-        
+        cleanContainer()
         return array
     }
 
-    
     //MARK: - Converting to RPN
     func convertToRPN(_ input: [String]) -> [String] {
         var rpnForm: [String] = []
@@ -134,6 +119,4 @@ final class RPN{
         }
         return stack.peek() ?? 0.0
     }
-    
-    
 }
