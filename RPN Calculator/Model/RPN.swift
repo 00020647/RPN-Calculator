@@ -26,7 +26,7 @@ final class RPN{
             if ExpressionHelper.isOperator(element) {
                 if element == Character(Op.subtraction.rawValue) {
                     if lastChar == nil ||
-                        ExpressionHelper.isOperator(lastChar!) ||
+                        ExpressionHelper.isOperator(lastChar ?? "0") ||
                         lastChar == Character(Op.leftParenthesis.rawValue) {
                         
                         if !numberContainer.isEmpty {
