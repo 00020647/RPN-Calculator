@@ -48,6 +48,8 @@ final class RPN{
         return array
     }
 
+
+
     //MARK: - Converting to RPN
     func convertToRPN(_ input: [String]) -> [String] {
         var rpnForm: [String] = []
@@ -70,7 +72,7 @@ final class RPN{
                     _ = stackOperators.pop()
                 default:
                     while let topStackOperator = stackOperators.peek(),
-                          ExpressionHelper.getPriority(topStackOperator) >= ExpressionHelper.getPriority(character) {
+                        ExpressionHelper.getPriority(topStackOperator) >= ExpressionHelper.getPriority(character) {
                         guard let topOperator = stackOperators.pop() else { break }
                         rpnForm.append(topOperator)
                     }
@@ -81,6 +83,7 @@ final class RPN{
         while let op = stackOperators.pop(){
             rpnForm.append(op)
         }
+        print(rpnForm)
         return rpnForm
     }
     
@@ -97,7 +100,6 @@ final class RPN{
             if let decimalNumber = Double(character) {
                 stack.push(Decimal(decimalNumber))
             }
-            
             else {
                 guard let lastNumber = stack.pop(), let preLastNumber = stack.pop() else { break }
                 
@@ -119,4 +121,6 @@ final class RPN{
         }
         return stack.peek() ?? 0.0
     }
+    
+    
 }

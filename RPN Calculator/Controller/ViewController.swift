@@ -19,6 +19,9 @@ final class ViewController: UIViewController, ButtonActionProtocol, ExpressionHa
         super.viewDidLoad()
         setupUI()
         fetchData()
+        print(rpn.stringToArray("7-52+4-8×9-4÷(8+6)"))
+        print(rpn.convertToRPN(["7", "-", "52", "+", "4", "-", "8", "×", "9", "-", "4", "÷", "(", "8", "+", "6", ")"]))
+        print(rpn.calculate("7-52+4-8×9-4÷(8+6)"))
     }
     
     

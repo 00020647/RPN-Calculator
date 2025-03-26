@@ -62,11 +62,24 @@ func areParenthesesBalanced(in expression: String) -> Bool {
 
 var didCalculate: Bool = false
 
-
 func isResultInvalid(_ expression: String) -> Bool {
     let lowercased = expression.lowercased()
     return lowercased == "nan" || lowercased == "inf" || lowercased == "-inf"
 }
+
+func disableOperLeftParenthesis(_ expression: String) -> Bool {
+    if expression.count >= 2 {
+        let preLastIndex = expression.index(expression.endIndex, offsetBy: -2)
+        let preLastChar = expression[preLastIndex]
+        if let last = expression.last, Op.subtraction.rawValue == String(last) {
+            if String(preLastChar) == Op.leftParenthesis.rawValue{
+                return true
+            }
+        }
+    }
+    return false
+}
+
 
 let buttonCharacters = [
     ["A","(",")","÷"],
