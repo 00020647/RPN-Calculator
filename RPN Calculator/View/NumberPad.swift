@@ -28,7 +28,6 @@ final class NumberPad: UIStackView {
         return stackView
     }
     
-
     override init(frame: CGRect) {
         super.init(frame: frame)
         clipsToBounds = true

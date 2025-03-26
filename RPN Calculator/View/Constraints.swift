@@ -7,8 +7,7 @@
 
 import UIKit
 
-let numberPad = NumberPad()
-let labelView = LabelViewModel()
+
 extension ViewController {
     func setupUI() {
         view.backgroundColor = ColorEnum.MainBackground.uiColor

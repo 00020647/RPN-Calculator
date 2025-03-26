@@ -95,18 +95,13 @@ extension ExpressionHandling {
             formatter.maximumFractionDigits = 9
             formatter.exponentSymbol = "e"
             return formatter.string(from: NSNumber(value: result.doubleValue)) ?? result.stringValue
-        }
-        
-        if result.doubleValue.truncatingRemainder(dividingBy: 1) == 0 && resultCount.count < 10 {
-            formatter.numberStyle = .none
+        }else{
+            formatter.numberStyle = .decimal
             formatter.minimumFractionDigits = 0
-            formatter.maximumFractionDigits = 0
+            formatter.maximumFractionDigits = 9
             return formatter.string(from: NSNumber(value: result.doubleValue)) ?? result.stringValue
         }
-        
-        return result.stringValue
     }
-
     func processDeleteLast(for expression: inout String) -> String {
         if isResultInvalid(expression) {
             return expression
@@ -164,7 +159,6 @@ extension ExpressionHandling {
         if isResultInvalid(expression) {
             return expression
         }
-        
         let numberComponents = expression.components(separatedBy: CharacterSet(charactersIn: allOperators))
         if let lastComponent = numberComponents.last, lastComponent.contains(Op.decimal.rawValue) {
             return expression

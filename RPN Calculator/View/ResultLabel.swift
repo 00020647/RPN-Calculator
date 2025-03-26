@@ -15,7 +15,6 @@ final class ResultLabel: UILabel {
         self.textColor = .white
         self.text = "0"
         self.font = UIFont.systemFont(ofSize: 50)
-        self.translatesAutoresizingMaskIntoConstraints = false
     }
     
     required init?(coder: NSCoder) {
@@ -27,7 +26,6 @@ final class LabelViewModel: UIView{
     let containerView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        
         return view
     }()
     
@@ -35,7 +33,6 @@ final class LabelViewModel: UIView{
         let scrollView = UIScrollView()
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.alwaysBounceHorizontal = false
-        
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()

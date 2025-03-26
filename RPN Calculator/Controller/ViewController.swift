@@ -7,13 +7,13 @@
 
 import UIKit
 
-let resultLabel = ResultLabel()
+
 
 final class ViewController: UIViewController, ButtonActionProtocol, ExpressionHandling{
     
+    let resultLabel = ResultLabel()
     let numberPad = NumberPad()
-    
-    let rpn = RPN()
+    let labelView = LabelViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,7 +23,6 @@ final class ViewController: UIViewController, ButtonActionProtocol, ExpressionHa
     
     
     //TODO: Multiply by utself if no second operand
-    
     func fetchData(){
         numberPad.configureButtons(with: buttonCharacters)
         numberPad.delegate = self
