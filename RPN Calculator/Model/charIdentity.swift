@@ -41,6 +41,7 @@ enum Op: String {
     case equalSign = "="
     case decimal = "."
     case zero = "0"
+    case e = "e"
 }
 
 let allOperators = "+-÷×()"

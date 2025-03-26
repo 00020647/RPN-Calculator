@@ -30,7 +30,6 @@ final class ViewController: UIViewController, ButtonActionProtocol, ExpressionHa
     }
     
     func btnReceiver(buttonInput: String) {
-        
         guard var stringExpression = resultLabel.text else { return }
         let characterReceived = buttonInput
         

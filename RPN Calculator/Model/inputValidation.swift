@@ -111,6 +111,9 @@ extension ExpressionHandling {
         if isResultInvalid(expression) {
             return expression
         }
+        if expression.contains(Op.e.rawValue){
+            expression.removeAll()
+        }
         if expression.count > 1 {
             expression.removeLast()
         }
@@ -161,8 +164,8 @@ extension ExpressionHandling {
         if isResultInvalid(expression) {
             return expression
         }
-        let numberComponents = expression.components(separatedBy: CharacterSet(charactersIn: allOperators))
         
+        let numberComponents = expression.components(separatedBy: CharacterSet(charactersIn: allOperators))
         if let lastComponent = numberComponents.last, lastComponent.contains(Op.decimal.rawValue) {
             return expression
         }
